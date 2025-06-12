@@ -45,7 +45,7 @@ if not all([MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_USERNAME, MQTT_PASSWORD]):
     sys.exit(1)
 
 # --- Statische Konfiguration für den Unified Namespace und die Anlagen ---
-UNS_BASE_TOPIC = "MyCompany/Biberach"
+UNS_BASE_TOPIC = "LH/LBC/Biberach"
 
 ASSETS = {
     "Fraesmaschine_01": {

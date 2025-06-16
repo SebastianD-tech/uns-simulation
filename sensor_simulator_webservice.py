@@ -139,13 +139,31 @@ class SensorSimulator:
 # TEIL 3: STARTPUNKT DES PROGRAMMS
 # Hier wird alles zusammengeführt und gestartet.
 # =============================================================================
-if __name__ == "__main__":
-    # Überprüfen, ob ein Anlagenname als Argument übergeben wurde (z.B. "Fraesmaschine_01")
-    if len(sys.argv) < 2:
-        print("FATALER FEHLER: Bitte geben Sie den Namen der zu simulierenden Anlage als Argument an.")
-        print("Beispiel: python sensor_simulator_webservice.py Fraesmaschine_01")
-        print("Verfügbare Anlagen:", ", ".join(ASSETS.keys()))
-        sys.exit(1)
+
+f __name__ == "__main__":
+    # Starte den Flask Webserver in einem eigenen Thread
+    web_thread = threading.Thread(target=run_web_server)
+    web_thread.daemon = True
+    web_thread.start()
+    print("HEALTH CHECK SERVER: Webserver wird im Hintergrund gestartet...")
+
+    # Starte für jede definierte Anlage einen eigenen Simulator-Thread
+    simulator_threads = []
+    for asset_name in ASSETS.keys():
+        print(f"Starte Simulation für: {asset_name}")
+        simulator = SensorSimulator(asset_name)
+        thread = threading.Thread(target=simulator.run)
+        thread.daemon = True
+        thread.start()
+        simulator_threads.append(thread)
+
+    # Haupt-Thread wartet unbegrenzt, damit das Programm nicht sofort endet
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nSimulation wird beendet.")
+
         
     asset_to_simulate = sys.argv[1]
 
